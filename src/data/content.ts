@@ -17,7 +17,7 @@ export const SITE = {
   description:
     "KIR adalah wadah bagi siswa untuk meneliti, berinovasi, dan menciptakan solusi bagi masa depan.",
   registerUrl: "https://regist-erobo-2026.vercel.app",
-  instagram: "https://instagram.com/erobooficial",
+  instagram: "https://instagram.com/eroboofficial",
   email: "erobokir@gmail.com",
   address: "SMKN 1 Jakarta, Jakarta Pusat, Indonesia",
 };

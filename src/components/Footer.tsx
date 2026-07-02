@@ -49,7 +49,7 @@ export default function Footer() {
               <li className="flex items-center gap-2">
                 <IconInstagram className="h-4 w-4 shrink-0" />
                 <a href={SITE.instagram} className="transition-colors hover:text-ink">
-                  @erobooficial
+                  @eroboofficial
                 </a>
               </li>
               <li className="flex items-center gap-2">
