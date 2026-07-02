@@ -34,7 +34,7 @@ export const NAV_LINKS: NavLink[] = [
 
 export const STATS: StatItem[] = [
   { id: "anggota", value: "10+", label: "Anggota Aktif" },
-  { id: "prestasi", value: "32+", label: "Prestasi" },
+  { id: "prestasi", value: "50+", label: "Prestasi" },
   { id: "proyek", value: "50+", label: "Proyek Penelitian" },
   { id: "tahun", value: "12+", label: "Tahun Berkarya" },
 ];
