@@ -172,7 +172,7 @@ export const STRUCTURE: StructureTier[] = [
     label: "Divisi Organisasi",
     members: [
       { id: "amidia", name: "Amidia Radisti", role: "Divisi Organisasi", photo: "/images/struktur/Amidia.jpg" },
-      { id: "early", name: "Early Janeuella", role: "Divisi Organisasi", photo: "/images/struktur/nijika.jpg" },
+      { id: "early", name: "Early Janeuella", role: "Divisi Organisasi", photo: "/images/struktur/early.jpeg" },
     ],
   },
   {

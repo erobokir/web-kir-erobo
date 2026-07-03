@@ -26,18 +26,18 @@ export default function Structure() {
               <p className="eyebrow mb-4 text-ink-dim">{tier.label}</p>
               <div className="flex w-full flex-wrap justify-center gap-5 sm:gap-8">
                 {tier.members.map((member) => (
-                  <div key={member.id} className="flex w-28 flex-col items-center text-center sm:w-36">
-                    <span className="hex-frame relative flex h-16 w-16 items-center justify-center overflow-hidden border border-signal-violet/40 bg-space-panel sm:h-24 sm:w-24">
+                  <div key={member.id} className="flex w-32 flex-col items-center text-center sm:w-44">
+                    <span className="hex-frame relative flex h-24 w-24 items-center justify-center overflow-hidden border border-signal-violet/40 bg-space-panel sm:h-32 sm:w-32">
                       {member.photo ? (
                         <ImageWithSkeleton
                           src={member.photo}
                           alt={member.name}
                           fill
-                          sizes="96px"
+                          sizes="128px"
                           className="object-cover"
                         />
                       ) : (
-                        <IconUsers className="h-7 w-7 text-ink-dim sm:h-8 sm:w-8" />
+                        <IconUsers className="h-9 w-9 text-ink-dim sm:h-10 sm:w-10" />
                       )}
                     </span>
                     <p className="mt-3 text-xs font-medium leading-snug text-ink sm:text-sm">
