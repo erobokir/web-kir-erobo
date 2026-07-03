@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description:
     "KIR EROBO (Kelompok Ilmiah Remaja) SMKN 1 Jakarta, wadah bagi siswa untuk meneliti, berinovasi, dan menciptakan solusi bagi masa depan melalui divisi AI, Rekayasa Teknologi, dan Science.",
   icons: {
-    icon: "/images/struktur/Fazil.jpeg",
+    icon: "/images/brand/logo-kir.png",
   },
 };
 
