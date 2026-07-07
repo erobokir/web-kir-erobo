@@ -10,7 +10,7 @@ export default function About() {
             Wadah Riset dan Inovasi untuk Remaja
           </h2>
           <p className="mt-5 text-base leading-relaxed text-ink-muted">
-            KIR EROBO merupakan organisasi yang bergerak di bidang penelitian
+            KIR EROBO atau Kelompok Ilmiah Remaja Engineering Researcher Of Budi Utomo merupakan ekstrakurikuler dari SMKN 1 Jakarta yang bergerak di bidang penelitian
             dan pengembangan ilmu pengetahuan serta teknologi. Berawal dari
             sekumpulan siswa yang aktif di lomba-lomba ilmiah, KIR kini
             berkembang menjadi rumah bagi tiga divisi AI, Rekayasa
