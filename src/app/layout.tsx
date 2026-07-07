@@ -17,7 +17,7 @@ const mono = JetBrains_Mono({
 });
 
 const SITE_URL = "https://kir-erobo.vercel.app";
-const SITE_TITLE = "KIR EROBO: The Science of Today is The Technology of Toomorrow";
+const SITE_TITLE = "KIR EROBO: The Science of Today is The Technology of Tomorrow";
 const SITE_DESCRIPTION =
   "KIR EROBO (Kelompok Ilmiah Remaja) SMKN 1 Jakarta, wadah bagi siswa untuk meneliti, berinovasi, dan menciptakan solusi bagi masa depan melalui divisi AI, Rekayasa Teknologi, dan Science.";
 
