@@ -95,13 +95,6 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
-
-  // Ganti dengan kode verifikasi asli dari Google Search Console /
-  // Bing Webmaster Tools kalau sudah didaftarkan.
-  // verification: {
-  //   google: "ISI_KODE_VERIFIKASI_GOOGLE",
-  //   other: { "msvalidate.01": "ISI_KODE_VERIFIKASI_BING" },
-  // },
 };
 
 const jsonLd = {
@@ -118,7 +111,7 @@ const jsonLd = {
     "@type": "EducationalOrganization",
     name: "SMKN 1 Jakarta",
   },
-  sameAs: ["https://instagram.com/kir_official"],
+  sameAs: ["https://instagram.com/eroboofficial"],
   department: [
     { "@type": "Organization", name: "AI (Artificial Intelligence)" },
     { "@type": "Organization", name: "Rekayasa Teknologi" },
