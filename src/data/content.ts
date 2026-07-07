@@ -84,7 +84,7 @@ export const JOURNEY: JourneyStep[] = [
     year: "2014 s.d. kini",
     title: "Berkembang",
     description:
-      "Terbentuknya sistem AOB (Angkatan Organisasi Baru) menjadikan KIR lebih terstruktur, dengan estafet kepemimpinan baru setiap tahunnya.",
+      "Terbentuknya sistem OAB (Orientasi Anggota Baru) menjadikan KIR lebih terstruktur, dengan estafet kepemimpinan baru setiap tahunnya.",
   },
   {
     id: "berprestasi",
