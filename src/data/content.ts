@@ -113,6 +113,13 @@ export const ACHIEVEMENTS: AchievementItem[] = [
     tier: "gold",
   },
   {
+    id: "KIP",
+    title: "Juara 3 Karya Ilmiah Pemuda",
+    event: "Lomba Karya Ilmiah Pemuda DKI Jakarta",
+    year: "2025",
+    tier: "bronze",
+  },
+  {
     id: "lkir",
     title: "Juara LKIR",
     event: "Lomba Karya Ilmiah Remaja Jakarta Pusat",
@@ -125,13 +132,6 @@ export const ACHIEVEMENTS: AchievementItem[] = [
     event: "Program Pemuda Pelopor Bidang Riset",
     year: "2022",
     tier: "special",
-  },
-  {
-    id: "lkti",
-    title: "Juara Harapan LKTI",
-    event: "Lomba Karya Tulis Ilmiah Tingkat Nasional",
-    year: "2021",
-    tier: "silver",
   },
 ];
 
