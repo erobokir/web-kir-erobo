@@ -2,7 +2,7 @@ import { SITE } from "@/data/content";
 import { IconArrowRight } from "@/components/icons";
 
 const CONTACT_WA_URL =
-  "https://wa.me/628568435320?text=Halo%20kak%20Safa%20aku%20mau%20tanya%20tentang%20pendaftaran%20kir%20dong%20%F0%9F%98%97%F0%9F%98%97%F0%9F%98%97";
+  "https://wa.me/628568435320?text=Halo%20kak%20Safa%20aku%20mau%20tanya%20tentang%20pendaftaran%20kir%20dong";
 
 export default function JoinCta() {
   return (
@@ -19,7 +19,7 @@ export default function JoinCta() {
           </h2>
           <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-ink-muted">
             Saatnya jadi bagian dari perjalanan besar ini. Open recruitment
-            kini dibuka untuk seluruh peserta didik {SITE.school}.
+            akan segera dibuka untuk seluruh peserta didik {SITE.school}.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">

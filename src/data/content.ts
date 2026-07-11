@@ -236,4 +236,10 @@ export const FAQ: FaqItem[] = [
     answer:
       "Kuota terbatas setiap periode. Hubungi kontak di bagian bawah halaman ini untuk info terbaru seputar jadwal dan deadline pendaftaran.",
   },
+  {
+    id: "jadwal",
+    question: "Kapan pendaftaran dibuka?",
+    answer:
+      "Pendaftaran dibuka setelah demo ekskul pada website KIR EROBO atau pada stand KIR EROBO. Jika ada pertanyaan bisa hubungi contact person dibawah.",
+  },
 ];
