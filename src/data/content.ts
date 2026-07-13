@@ -242,10 +242,4 @@ export const FAQ: FaqItem[] = [
     answer:
       "Pendaftaran dibuka setelah demo ekskul pada website KIR EROBO atau pada stand KIR EROBO. Jika ada pertanyaan bisa hubungi contact person dibawah.",
   },
-  {
-    id: "Kakak Ganteng",
-    question: "Min di KIR ada kakak ganteng?",
-    answer:
-      "Ohh tentu ada! kalian nanti masuk aja ke KIR EROBO terus kenalan sama kakak Fazil",
-  },
 ];
