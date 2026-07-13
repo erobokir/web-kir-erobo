@@ -18,19 +18,18 @@ export default function JoinCta() {
             Punya Ide? Ingin Berinovasi?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-            Saatnya jadi bagian dari perjalanan besar ini. Open recruitment
-            akan segera dibuka untuk seluruh peserta didik {SITE.school}.
+            Saatnya jadi bagian dari perjalanan besar ini. Open recruitment dibuka untuk seluruh peserta didik {SITE.school}.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <a
-              // href={SITE.registerUrl}
+              href={SITE.registerUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-2 rounded-full bg-signal-violet px-8 py-4 text-sm font-semibold text-white shadow-glow transition-transform hover:-translate-y-0.5"
             >
-              Coming Soon
-              {/* <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /> */}
+              Daftarkan dirimu
+              <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
 
             <a
