@@ -107,17 +107,24 @@ export const JOURNEY: JourneyStep[] = [
 export const ACHIEVEMENTS: AchievementItem[] = [
   {
     id: "Itechno Cup PNJ",
-    title: "Juara 1 IoT project 2026",
+    title: "Juara 1 IoT Politeknik Negeri Jakarta",
     event: "Itechno cup Politeknik Negeri Jakarta",
-    year: "2026",
+    year: "2025",
     tier: "gold",
   },
   {
     id: "KIP",
-    title: "Juara 3 Karya Ilmiah Pemuda",
-    event: "Lomba Karya Ilmiah Pemuda DKI Jakarta",
+    title: "Juara 3 Karya Ilmiah Pemuda wilayah Jakarta Pusat",
+    event: "Lomba Karya Ilmiah Pemuda wilayah Jakarta pusat",
     year: "2025",
     tier: "bronze",
+  },
+  {
+    id: "KIP",
+    title: "Finalist Karya Ilmiah Pemuda DKI Jakarta",
+    event: "Lomba Karya Ilmiah Pemuda wilayah Jakarta pusat",
+    year: "2025",
+    tier: "special",
   },
   {
     id: "lkir",
@@ -131,6 +138,34 @@ export const ACHIEVEMENTS: AchievementItem[] = [
     title: "Delegasi Pemuda Pelopor",
     event: "Program Pemuda Pelopor Bidang Riset",
     year: "2022",
+    tier: "special",
+  },
+  {
+    id: "LKTI UNDIP",
+    title: "Finalist LKTI UNDIP",
+    event: "LKTI Fullpaper UNDIP",
+    year: "2025",
+    tier: "special",
+  },
+  {
+    id: "Frontend PNJ",
+    title: "Finalist Frontend Politeknik Negeri Jakarta",
+    event: "Itechnocup Politeknik Negeri Jakarta",
+    year: "2025",
+    tier: "special",
+  },
+  {
+    id: "Itechno Cup PNJ",
+    title: "Finalist IoT Politeknik Negeri Jakarta",
+    event: "Itechnocup Politeknik Negeri Jakarta",
+    year: "2025",
+    tier: "special",
+  },
+  {
+    id: "Itechno Cup PNJ",
+    title: "Finalist ITNSA Politeknik Negeri Jakarta",
+    event: "Itechnocup Politeknik Negeri Jakarta",
+    year: "2025",
     tier: "special",
   },
 ];
