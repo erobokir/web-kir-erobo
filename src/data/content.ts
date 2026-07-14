@@ -122,7 +122,7 @@ export const ACHIEVEMENTS: AchievementItem[] = [
   {
     id: "KIP",
     title: "Finalist Karya Ilmiah Pemuda DKI Jakarta",
-    event: "Lomba Karya Ilmiah Pemuda wilayah Jakarta pusat",
+    event: "Lomba Karya Ilmiah Pemuda DKI Jakarta",
     year: "2025",
     tier: "special",
   },
