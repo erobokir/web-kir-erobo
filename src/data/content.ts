@@ -4,6 +4,7 @@ import type {
   FaqItem,
   GalleryImage,
   JourneyStep,
+  MarqueeRow,
   NavLink,
   StatItem,
   StructureTier,
@@ -334,4 +335,16 @@ export const FAQ: FaqItem[] = [
     answer:
       "Kuota terbatas setiap periode. Hubungi kontak di bagian bawah halaman ini untuk info terbaru seputar jadwal dan deadline pendaftaran.",
   },
+];
+
+export const MARQUEE_ROW_1: MarqueeRow = [
+  "Masuk KIR EROBO berpeluang untuk LKS Ekshibisi Kompetisi Kecerdasan Artifisial, OSN Ekshibisi Kompetisi Kecerdasan Artifisial, LKS Collaborative Robotics System Integration, dan lainnya",
+];
+export const MARQUEE_ROW_2: MarqueeRow = [
+  "THE SCIENCE OF TODAY",
+  "IS THE TECHNOLOGY OF TOMORROW",
+  "THE SCIENCE OF TODAY",
+  "IS THE TECHNOLOGY OF TOMORROW",
+  "THE SCIENCE OF TODAY",
+  "IS THE TECHNOLOGY OF TOMORROW",
 ];

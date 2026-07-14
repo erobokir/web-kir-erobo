@@ -41,7 +41,7 @@ export default function Navbar() {
         scrolled ? "bg-space/80 backdrop-blur-md border-b border-space-line" : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 h-16 sm:h-20 sm:px-8">
         <a href="#home" className="flex items-center gap-3">
           <span className="relative flex h-9 w-9 items-center justify-center">
             <Image

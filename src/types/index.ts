@@ -58,3 +58,5 @@ export interface NavLink {
   href: string;
   label: string;
 }
+
+export type MarqueeRow = string[];

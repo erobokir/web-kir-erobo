@@ -1,4 +1,6 @@
 import Navbar from "@/components/Navbar";
+import DoubleMarquee from "@/components/Marquee";
+import { MARQUEE_ROW_1, MARQUEE_ROW_2 } from "@/data/content";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import JourneyTimeline from "@/components/JourneyTimeline";
@@ -14,17 +16,20 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <JourneyTimeline />
-        <Divisions />
-        <Achievements />
-        <Gallery />
-        <Structure />
-        <Faq />
-        <JoinCta />
-      </main>
+      <div className="pt-16 sm:pt-20">
+        <DoubleMarquee rowOne={MARQUEE_ROW_1} rowTwo={MARQUEE_ROW_2} />
+        <main>
+          <Hero />
+          <About />
+          <JourneyTimeline />
+          <Divisions />
+          <Achievements />
+          <Gallery />
+          <Structure />
+          <Faq />
+          <JoinCta />
+        </main>
+      </div>
       <Footer />
     </>
   );
