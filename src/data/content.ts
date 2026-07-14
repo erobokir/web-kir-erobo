@@ -338,7 +338,10 @@ export const FAQ: FaqItem[] = [
 ];
 
 export const MARQUEE_ROW_1: MarqueeRow = [
-  "Masuk KIR EROBO berpeluang untuk LKS Ekshibisi Kompetisi Kecerdasan Artifisial, OSN Ekshibisi Kompetisi Kecerdasan Artifisial, LKS Collaborative Robotics System Integration, dan lainnya",
+  "Masuk KIR EROBO berpeluang untuk",
+  "LKS Ekshibisi Kompetisi Kecerdasan Artifisial",
+  "OSN Ekshibisi Kompetisi Kecerdasan Artifisial",
+  "LKS Collaborative Robotics System Integration, dan lainnya",
 ];
 export const MARQUEE_ROW_2: MarqueeRow = [
   "THE SCIENCE OF TODAY",

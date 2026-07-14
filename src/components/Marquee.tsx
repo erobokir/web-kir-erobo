@@ -41,7 +41,7 @@ export default function DoubleMarquee({ rowOne, rowTwo, className = "" }: Double
       className={`marquee-pause marquee-fade sticky top-16 z-40 space-y-2.5 border-y border-space-line bg-space/85 py-2.5 backdrop-blur-md sm:top-20 sm:space-y-4 sm:py-4 ${className}`}
     >
       <MarqueeLine items={rowOne} />
-      <MarqueeLine items={rowTwo} reverse />
+      {/* <MarqueeLine items={rowTwo} reverse /> */}
     </div>
   );
 }
