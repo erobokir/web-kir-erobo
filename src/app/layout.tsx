@@ -17,7 +17,8 @@ const mono = JetBrains_Mono({
 });
 
 const SITE_URL = "https://kir-erobo.vercel.app";
-const SITE_TITLE = "KIR EROBO: The Science of Today is The Technology of Tomorrow";
+const SITE_TITLE =
+  "KIR EROBO: The Science of Today is The Technology of Tomorrow";
 const SITE_DESCRIPTION =
   "KIR EROBO (Kelompok Ilmiah Remaja) SMKN 1 Jakarta, wadah bagi siswa untuk meneliti, berinovasi, dan menciptakan solusi bagi masa depan melalui divisi AI, Rekayasa Teknologi, dan Science.";
 
@@ -42,7 +43,45 @@ export const metadata: Metadata = {
     "riset siswa SMK",
     "budut",
     "EROBO",
-    "Engineering Researcher of Budi Utomo"
+    "Engineering Researcher of Budi Utomo",
+    "SMKN 1 Jakarta",
+    "ekskul SMK Jakarta",
+    "komunitas ilmiah remaja Jakarta",
+    "organisasi siswa SMK",
+    "Budi Utomo Jakarta",
+    "Jakarta Pusat",
+    "KIR SMK",
+    "lomba karya ilmiah remaja",
+    "lomba LKTI SMA SMK",
+    "Pemuda Pelopor",
+    "OAB orientasi anggota baru",
+    "riset dan inovasi siswa",
+    "eksperimen sains remaja",
+    "proyek penelitian siswa",
+    "cerpen ilmiah",
+    "karya tulis ilmiah remaja",
+    "kompetisi sains SMK",
+    "open recruitment KIR",
+    "pendaftaran ekskul KIR",
+    "divisi Rekayasa Teknologi",
+    "divisi Science",
+    "kecerdasan buatan remaja",
+    "coding untuk pelajar",
+    "elektronika dan IoT",
+    "riset sains dan pertanian",
+    "pembelajaran mesin siswa",
+    "teknologi untuk pelajar SMK",
+    "inovasi remaja Indonesia",
+    "wadah riset pelajar",
+    "pengembangan ilmu pengetahuan dan teknologi",
+    "kerja sama tim pelajar",
+    "berpikir kritis siswa",
+    "solusi masa depan",
+    "generasi inovator muda",
+    "The Science of Today is The Technology of Tomorrow",
+    "Inovasi hari ini solusi untuk esok hari",
+    "EROBO official",
+    "",
   ],
   authors: [{ name: "KIR EROBO" }],
   creator: "KIR EROBO",
