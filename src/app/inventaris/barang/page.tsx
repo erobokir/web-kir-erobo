@@ -40,6 +40,14 @@ export default function BarangListPage() {
             + Tambah Barang
           </Link>
         )}
+        {user?.role === "divisi" && (
+          <Link
+            href="/inventaris/barang/tambah"
+            className="rounded-lg bg-signal-violet px-4 py-2 text-sm font-medium text-white shadow-glow"
+          >
+            + Tambah Barang
+          </Link>
+        )}
       </header>
 
       <input
