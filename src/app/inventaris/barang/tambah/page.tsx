@@ -8,7 +8,7 @@ import type { Item } from "@/types/inventory";
 
 export default function TambahBarangPage() {
   return (
-    <RoleGate allow={["superadmin"]}>
+    <RoleGate allow={["superadmin", "divisi"]}>
       <TambahBarangForm />
     </RoleGate>
   );
