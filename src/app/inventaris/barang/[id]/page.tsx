@@ -145,8 +145,15 @@ export default function BarangDetailPage({ params }: { params: { id: string } })
             >
               Tampilkan QR untuk dicetak
             </button>
+          ) : user?.role === "divisi" ? (
+            <button
+              onClick={loadQr}
+              className="rounded-lg bg-signal-violet/20 px-3 py-2 text-xs font-medium text-signal-violet"
+            >
+              Tampilkan QR untuk dicetak
+            </button>
           ) : (
-            <p className="text-xs text-ink-dim">Hanya superadmin yang bisa mencetak QR.</p>
+            <p className="text-xs text-ink-dim">Hanya superadmin dan divisi organisasi yang bisa mencetak QR.</p>
           )}
         </div>
 
