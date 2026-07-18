@@ -65,7 +65,7 @@ export default function BarangDetailPage({ params }: { params: { id: string } })
       <div className="space-y-6 lg:col-span-2">
         <header>
           <Link href="/inventaris/barang" className="text-xs text-ink-dim hover:text-ink">
-            ← Kembali ke katalog
+            Kembali ke katalog
           </Link>
           <p className="mt-2 font-mono text-xs text-signal-cyan">{item.code}</p>
           <h1 className="mt-1 font-display text-2xl font-semibold text-ink">{item.name}</h1>
