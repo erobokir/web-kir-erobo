@@ -3,12 +3,16 @@ import type { MetadataRoute } from "next";
 const SITE_URL = "https://kir-erobo.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: SITE_URL,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
+  const routes = [
+    "",
+    "/inventaris",
+    "/diklat",
   ];
+
+  return routes.map((route) => ({
+    url: `${SITE_URL}${route}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: route === "" ? 1 : 0.8,
+  }));
 }
