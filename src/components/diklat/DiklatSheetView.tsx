@@ -355,8 +355,7 @@ export default function DiklatSheetView({
 
       {!isEditor && (
         <p className="text-xs text-ink-dim">
-          Tampilan ini hanya-lihat dan otomatis update secara real-time saat
-          data diklat mengubah isinya.
+          Dashboard jadwal EROBO mode view 
         </p>
       )}
 
