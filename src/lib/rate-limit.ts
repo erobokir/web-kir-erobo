@@ -1,14 +1,4 @@
 import "server-only";
-
-/**
- * Rate limiter in-memory sederhana (token bucket per key, mis. per IP+route).
- *
- * CATATAN PRODUKSI: in-memory berarti counter reset setiap kali server
- * restart/scale, dan TIDAK sinkron kalau instance/server lebih dari satu
- * (mis. di Vercel serverless yang multi-instance). Untuk produksi skala besar,
- * ganti dengan penyimpanan bersama seperti Upstash Redis / Vercel KV.
- * Untuk kebutuhan dasar & single-instance, ini cukup memadai.
- */
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
 export function checkRateLimit(

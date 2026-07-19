@@ -16,8 +16,6 @@ function getSessionSecret(): string {
   return secret;
 }
 
-// ---------- Password hashing (scrypt, bawaan Node — tanpa dependency baru) ----------
-
 export function hashDiklatPassword(password: string): string {
   const salt = crypto.randomBytes(16).toString("hex");
   const derived = crypto.scryptSync(password, salt, 64).toString("hex");
@@ -54,8 +52,6 @@ export async function changeDiklatPassword(newPassword: string): Promise<void> {
     .eq("id", "diklat");
   if (error) throw error;
 }
-
-// ---------- Session cookie (signed, HttpOnly) ----------
 
 function sign(payload: string): string {
   return crypto.createHmac("sha256", getSessionSecret()).update(payload).digest("hex");
@@ -102,14 +98,12 @@ export function clearDiklatSessionCookie() {
   cookies().delete(DIKLAT_COOKIE_NAME);
 }
 
-/** Cek apakah request/user saat ini sedang login sebagai role diklat */
 export function isDiklatLoggedIn(): boolean {
   const token = cookies().get(DIKLAT_COOKIE_NAME)?.value;
   if (!token) return false;
   return verifySessionToken(token);
 }
 
-/** Versi untuk dipakai di Route Handler (menerima Request, baca header cookie manual) */
 export function isDiklatLoggedInFromRequest(request: Request): boolean {
   const cookieHeader = request.headers.get("cookie") || "";
   const match = cookieHeader
