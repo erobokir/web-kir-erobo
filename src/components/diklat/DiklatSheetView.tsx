@@ -39,7 +39,6 @@ export default function DiklatSheetView({
     dirtyRef.current = dirty;
   }, [dirty]);
 
-  // ---------- Realtime subscription (Supabase Realtime / websocket) ----------
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
 
@@ -47,16 +46,19 @@ export default function DiklatSheetView({
       .channel("diklat-sheet-realtime")
       .on(
         "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "diklat_sheet_data", filter: "id=eq.main" },
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "diklat_sheet_data",
+          filter: "id=eq.main",
+        },
         (payload) => {
-          // Kalau ada perubahan lokal yang belum tersimpan, jangan ditimpa dulu
-          // supaya tidak mengganggu ketikan yang sedang berlangsung.
           if (dirtyRef.current) return;
           const next = payload.new as DiklatSheet;
           setTitle(next.title);
           setColumns(next.columns);
           setRows(next.rows);
-        }
+        },
       )
       .subscribe((subStatus) => {
         if (subStatus === "SUBSCRIBED") setStatus("connected");
@@ -71,29 +73,42 @@ export default function DiklatSheetView({
       supabase.removeChannel(channel);
     };
   }, []);
-
-  // ---------- Autosave (debounced) ----------
   const save = useCallback(
-    async (nextTitle: string, nextColumns: DiklatColumn[], nextRows: DiklatRow[]) => {
+    async (
+      nextTitle: string,
+      nextColumns: DiklatColumn[],
+      nextRows: DiklatRow[],
+    ) => {
       setSaving(true);
       try {
         const res = await fetch("/api/diklat/sheet", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title: nextTitle, columns: nextColumns, rows: nextRows }),
+          body: JSON.stringify({
+            title: nextTitle,
+            columns: nextColumns,
+            rows: nextRows,
+          }),
         });
         if (res.ok) setDirty(false);
       } finally {
         setSaving(false);
       }
     },
-    []
+    [],
   );
 
-  function scheduleSave(nextTitle: string, nextColumns: DiklatColumn[], nextRows: DiklatRow[]) {
+  function scheduleSave(
+    nextTitle: string,
+    nextColumns: DiklatColumn[],
+    nextRows: DiklatRow[],
+  ) {
     setDirty(true);
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => save(nextTitle, nextColumns, nextRows), 800);
+    saveTimer.current = setTimeout(
+      () => save(nextTitle, nextColumns, nextRows),
+      800,
+    );
   }
 
   useEffect(() => {
@@ -101,8 +116,6 @@ export default function DiklatSheetView({
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
   }, []);
-
-  // ---------- Editing actions (hanya efektif kalau isEditor) ----------
   function handleTitleChange(value: string) {
     setTitle(value);
     scheduleSave(value, columns, rows);
@@ -110,7 +123,7 @@ export default function DiklatSheetView({
 
   function updateCell(rowId: string, colKey: string, value: string) {
     const nextRows = rows.map((r) =>
-      r.id === rowId ? { ...r, cells: { ...r.cells, [colKey]: value } } : r
+      r.id === rowId ? { ...r, cells: { ...r.cells, [colKey]: value } } : r,
     );
     setRows(nextRows);
     scheduleSave(title, columns, nextRows);
@@ -121,7 +134,10 @@ export default function DiklatSheetView({
     if (!label) return;
     const key = slugifyKey(label);
     const nextColumns = [...columns, { key, label }];
-    const nextRows = rows.map((r) => ({ ...r, cells: { ...r.cells, [key]: "" } }));
+    const nextRows = rows.map((r) => ({
+      ...r,
+      cells: { ...r.cells, [key]: "" },
+    }));
     setColumns(nextColumns);
     setRows(nextRows);
     scheduleSave(title, nextColumns, nextRows);
@@ -131,7 +147,9 @@ export default function DiklatSheetView({
     const current = columns.find((c) => c.key === key);
     const label = prompt("Ganti nama kolom menjadi:", current?.label);
     if (!label) return;
-    const nextColumns = columns.map((c) => (c.key === key ? { ...c, label } : c));
+    const nextColumns = columns.map((c) =>
+      c.key === key ? { ...c, label } : c,
+    );
     setColumns(nextColumns);
     scheduleSave(title, nextColumns, rows);
   }
@@ -178,9 +196,11 @@ export default function DiklatSheetView({
 
   return (
     <div className="space-y-5">
-      <header className="flex flex-wrap items-start justify-between gap-3">
+      <header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0 flex-1">
-          <p className="text-xs uppercase tracking-widest text-signal-cyan">Diklat</p>
+          <p className="text-xs uppercase tracking-widest text-signal-cyan">
+            Diklat
+          </p>
           {isEditor ? (
             <input
               value={title}
@@ -188,15 +208,17 @@ export default function DiklatSheetView({
               className="mt-1 w-full max-w-md rounded-lg border border-transparent bg-transparent font-display text-2xl font-semibold text-ink focus:border-signal-violet focus:bg-space-panel2 focus:px-2 focus:py-1 focus:outline-none"
             />
           ) : (
-            <h1 className="mt-1 font-display text-2xl font-semibold text-ink">{title}</h1>
+            <h1 className="mt-1 font-display text-2xl font-semibold text-ink">
+              {title}
+            </h1>
           )}
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap gap-2 md:w-auto md:justify-end">
           <ConnectionBadge status={status} />
           <button
             onClick={exportToExcel}
-            className="rounded-lg bg-signal-teal/20 px-3 py-1.5 text-xs font-medium text-signal-teal"
+            className="w-full md:w-auto rounded-lg bg-signal-teal/20 px-3 py-2 text-xs font-medium text-signal-teal"
           >
             Export ke Excel (.xlsx)
           </button>
@@ -204,7 +226,7 @@ export default function DiklatSheetView({
             <>
               <button
                 onClick={() => setShowChangePassword(true)}
-                className="rounded-lg border border-space-line px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+                className="w-full md:w-auto rounded-lg border border-space-line px-3 py-2 text-xs font-medium text-ink-muted hover:text-ink"
               >
                 Ganti Password
               </button>
@@ -217,7 +239,7 @@ export default function DiklatSheetView({
           ) : (
             <Link
               href="/diklat/login"
-              className="rounded-lg bg-signal-violet/20 px-3 py-1.5 text-xs font-medium text-signal-violet"
+              className="w-full text-center md:w-auto rounded-lg bg-signal-violet/20 px-3 py-2 text-xs font-medium text-signal-violet"
             >
               Masuk sebagai Diklat
             </Link>
@@ -227,7 +249,13 @@ export default function DiklatSheetView({
 
       {isEditor && (
         <div className="flex items-center gap-2 text-xs text-ink-dim">
-          <span>{saving ? "Menyimpan..." : dirty ? "Ada perubahan belum tersimpan..." : "Semua perubahan tersimpan"}</span>
+          <span>
+            {saving
+              ? "Menyimpan..."
+              : dirty
+                ? "Ada perubahan belum tersimpan..."
+                : "Semua perubahan tersimpan"}
+          </span>
         </div>
       )}
 
@@ -236,11 +264,16 @@ export default function DiklatSheetView({
           <thead>
             <tr className="border-b border-space-line">
               {columns.map((col) => (
-                <th key={col.key} className="px-3 py-2 font-medium text-ink-dim">
+                <th
+                  key={col.key}
+                  className="px-3 py-2 font-medium text-ink-dim"
+                >
                   <div className="flex items-center gap-1">
                     <span
                       onClick={() => isEditor && renameColumn(col.key)}
-                      className={isEditor ? "cursor-pointer hover:text-ink" : ""}
+                      className={
+                        isEditor ? "cursor-pointer hover:text-ink" : ""
+                      }
                     >
                       {col.label}
                     </span>
@@ -267,7 +300,9 @@ export default function DiklatSheetView({
                     {isEditor ? (
                       <input
                         value={row.cells[col.key] ?? ""}
-                        onChange={(e) => updateCell(row.id, col.key, e.target.value)}
+                        onChange={(e) =>
+                          updateCell(row.id, col.key, e.target.value)
+                        }
                         className="w-full rounded bg-transparent px-1 py-1 focus:bg-space-panel2 focus:outline-none"
                       />
                     ) : (
@@ -277,7 +312,10 @@ export default function DiklatSheetView({
                 ))}
                 {isEditor && (
                   <td className="px-3 py-1.5 text-right">
-                    <button onClick={() => removeRow(row.id)} className="text-ink-dim hover:text-red-400">
+                    <button
+                      onClick={() => removeRow(row.id)}
+                      className="text-ink-dim hover:text-red-400"
+                    >
                       🗑
                     </button>
                   </td>
@@ -286,7 +324,10 @@ export default function DiklatSheetView({
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={Math.max(columns.length, 1) + 1} className="px-3 py-6 text-center text-ink-dim">
+                <td
+                  colSpan={Math.max(columns.length, 1) + 1}
+                  className="px-3 py-6 text-center text-ink-dim"
+                >
                   Belum ada data.
                 </td>
               </tr>
@@ -314,21 +355,39 @@ export default function DiklatSheetView({
 
       {!isEditor && (
         <p className="text-xs text-ink-dim">
-          Tampilan ini hanya-lihat dan otomatis update secara real-time saat data diklat mengubah isinya.
+          Tampilan ini hanya-lihat dan otomatis update secara real-time saat
+          data diklat mengubah isinya.
         </p>
       )}
 
-      {showChangePassword && <ChangePasswordForm onClose={() => setShowChangePassword(false)} />}
+      {showChangePassword && (
+        <ChangePasswordForm onClose={() => setShowChangePassword(false)} />
+      )}
     </div>
   );
 }
 
 function ConnectionBadge({ status }: { status: ConnectionStatus }) {
   const config = {
-    connected: { label: "🟢 Live", className: "bg-signal-teal/15 text-signal-teal" },
-    connecting: { label: "🟡 Menghubungkan...", className: "bg-signal-gold/15 text-signal-gold" },
-    disconnected: { label: "🔴 Terputus", className: "bg-red-500/15 text-red-400" },
+    connected: {
+      label: "🟢 Live",
+      className: "bg-signal-teal/15 text-signal-teal",
+    },
+    connecting: {
+      label: "🟡 Menghubungkan...",
+      className: "bg-signal-gold/15 text-signal-gold",
+    },
+    disconnected: {
+      label: "🔴 Terputus",
+      className: "bg-red-500/15 text-red-400",
+    },
   } as const;
   const c = config[status];
-  return <span className={`rounded-full px-2.5 py-1 text-[10px] font-medium ${c.className}`}>{c.label}</span>;
+  return (
+    <span
+      className={`rounded-full px-2.5 py-1 text-[10px] font-medium ${c.className}`}
+    >
+      {c.label}
+    </span>
+  );
 }
