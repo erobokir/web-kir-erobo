@@ -18,9 +18,9 @@ function getCountdown(targetISO: string): {
   const seconds = totalSeconds % 60;
 
   let label = "";
-  if (days > 0) label = `${days}h ${hours}j`;
-  else if (hours > 0) label = `${hours}j ${minutes}m`;
-  else label = `${minutes}m ${seconds}d`;
+  if (days > 0) label = `${days}hari ${hours}jam`;
+  else if (hours > 0) label = `${hours}jam ${minutes}menit`;
+  else label = `${minutes}menit ${seconds}detik`;
 
   return { label, urgent: diff < 24 * 60 * 60 * 1000, passed: false };
 }
