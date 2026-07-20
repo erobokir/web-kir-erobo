@@ -1,4 +1,3 @@
-import { isDiklatLoggedIn } from "@/lib/diklat/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import JadwalDashboard from "@/components/jadwal/JadwalDashboard";
 import type { JadwalItem } from "@/types/jadwal";
@@ -12,8 +11,6 @@ export const metadata: Metadata = {
 };
 
 export default async function JadwalPage() {
-  const isEditor = isDiklatLoggedIn();
-
   const supabase = createSupabaseAdminClient();
   const { data } = await supabase
     .from("jadwal_data")
@@ -23,5 +20,5 @@ export default async function JadwalPage() {
 
   const items: JadwalItem[] = data?.items ?? [];
 
-  return <JadwalDashboard initialItems={items} isEditor={isEditor} />;
+  return <JadwalDashboard initialItems={items} />;
 }
