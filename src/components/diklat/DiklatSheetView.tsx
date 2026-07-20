@@ -5,7 +5,10 @@ import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { diklatLogoutAction } from "@/app/diklat/actions";
 import ChangePasswordForm from "./ChangePasswordForm";
+import JadwalPanel from "./JadwalPanel";
 import type { DiklatColumn, DiklatRow, DiklatSheet } from "@/types/diklat";
+
+type ActiveTab = "sheet" | "jadwal";
 
 type ConnectionStatus = "connecting" | "connected" | "disconnected";
 
@@ -31,6 +34,7 @@ export default function DiklatSheetView({
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<ConnectionStatus>("connecting");
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [activeTab, setActiveTab] = useState<ActiveTab>("sheet");
 
   const dirtyRef = useRef(dirty);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -247,7 +251,32 @@ export default function DiklatSheetView({
         </div>
       </header>
 
+      {/* Tab navigasi — hanya tampil untuk editor */}
       {isEditor && (
+        <div className="flex gap-1 rounded-xl border border-space-line bg-space-panel/40 p-1">
+          {(["sheet", "jadwal"] as ActiveTab[]).map((tab) => {
+            const labels: Record<ActiveTab, string> = {
+              sheet: "📋 Data Sheet",
+              jadwal: "📅 Jadwal Kegiatan",
+            };
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  activeTab === tab
+                    ? "bg-signal-violet text-white shadow"
+                    : "text-ink-muted hover:text-ink"
+                }`}
+              >
+                {labels[tab]}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {isEditor && activeTab === "sheet" && (
         <div className="flex items-center gap-2 text-xs text-ink-dim">
           <span>
             {saving
@@ -259,6 +288,11 @@ export default function DiklatSheetView({
         </div>
       )}
 
+      {/* Panel Jadwal */}
+      {isEditor && activeTab === "jadwal" && <JadwalPanel />}
+
+      {/* Konten Sheet — sembunyikan saat tab jadwal aktif */}
+      {activeTab === "sheet" && (
       <div className="overflow-x-auto rounded-2xl border border-space-line bg-space-panel/60">
         <table className="w-full min-w-[480px] text-left text-sm">
           <thead>
@@ -335,8 +369,9 @@ export default function DiklatSheetView({
           </tbody>
         </table>
       </div>
+      )} 
 
-      {isEditor && (
+      {isEditor && activeTab === "sheet" && (
         <div className="flex gap-2">
           <button
             onClick={addRow}
@@ -355,7 +390,7 @@ export default function DiklatSheetView({
 
       {!isEditor && (
         <p className="text-xs text-ink-dim">
-          Dashboard jadwal EROBO mode view 
+          Login sebagai Diklat untuk mengelola data &amp; jadwal.
         </p>
       )}
 
