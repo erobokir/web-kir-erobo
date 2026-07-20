@@ -121,7 +121,13 @@ export default function JadwalDashboard({
     <div className="min-h-screen bg-space bg-hex-grid px-4 py-6 text-ink">
       <div className="mx-auto max-w-md">
         <header className="mb-6">
-          <p className="text-[10px] uppercase tracking-widest text-signal-cyan">
+          <a
+            href="/"
+            className="rounded-lg border border-space-line px-1.5 py-1.5 text-xs text-ink-muted hover:text-ink"
+          >
+            Kembali
+          </a>
+          <p className="mt-4 text-[10px] uppercase tracking-widest text-signal-cyan">
             KIR EROBO
           </p>
           <h1 className="mt-0.5 font-display text-2xl font-bold text-ink">
