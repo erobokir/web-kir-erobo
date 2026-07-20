@@ -14,10 +14,10 @@ function getCountdown(targetISO: string) {
   const seconds = s % 60;
   const label =
     days > 0
-      ? `${days}h ${hours}j`
+      ? `${days}hari ${hours}jam`
       : hours > 0
-        ? `${hours}j ${minutes}m`
-        : `${minutes}m ${seconds}d`;
+        ? `${hours}jam ${minutes}menit`
+        : `${minutes}menit ${seconds}detik`;
   return { label, urgent: diff < 24 * 60 * 60 * 1000, passed: false };
 }
 
