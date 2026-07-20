@@ -31,6 +31,7 @@ export const NAV_LINKS: NavLink[] = [
   { href: "#prestasi", label: "Prestasi" },
   { href: "#struktur", label: "Struktur" },
   { href: "#faq", label: "FAQ" },
+  { href: "/jadwal", label: "Jadwal" },
 ];
 
 export const STATS: StatItem[] = [

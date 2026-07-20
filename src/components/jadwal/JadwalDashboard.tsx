@@ -314,20 +314,13 @@ export default function JadwalDashboard({
 
          
           <div className="mt-3 flex items-center gap-2">
-            {isEditor ? (
+            (isEditor ? (
               <form action={diklatLogoutAction}>
                 <button className="rounded-lg border border-space-line px-3 py-1.5 text-xs text-ink-muted hover:text-ink">
                   Keluar
                 </button>
               </form>
-            ) : (
-              <Link
-                href="/diklat/login"
-                className="rounded-lg bg-signal-violet/20 px-3 py-1.5 text-xs font-medium text-signal-violet"
-              >
-                Login Diklat
-              </Link>
-            )}
+            ))
           </div>
         </header>
 
