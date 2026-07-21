@@ -5,6 +5,7 @@ import Link from "next/link";
 import { apiFetch } from "@/lib/inventory/api";
 import { useInventoryAuth } from "@/lib/inventory/auth-context";
 import { roleLabel } from "@/components/inventory/Sidebar";
+import KeuanganWidget from "@/components/inventory/KeuanganWidget";
 import type { DashboardSummary, Item } from "@/types/inventory";
 
 export default function InventarisDashboardPage() {
@@ -62,6 +63,8 @@ export default function InventarisDashboardPage() {
         <SummaryCard label="Stok Menipis" value={summary?.lowStockCount} accent="gold" />
         <SummaryCard label="Pengajuan Menunggu" value={summary?.pendingRequests} accent="violet" />
       </section>
+
+      {(user?.role === "ketua" || user?.role === "superadmin") && <KeuanganWidget />}
 
       <section className="rounded-2xl border border-space-line bg-space-panel/60 p-5">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
