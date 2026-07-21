@@ -32,7 +32,6 @@ export default function BarangDetailPage({ params }: { params: { id: string } })
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function loadQr() {
