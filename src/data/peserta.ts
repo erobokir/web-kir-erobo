@@ -6,5 +6,5 @@ export interface Peserta {
 }
 
 export const DAFTAR_PESERTA: Peserta[] = [
-  { id: "p01", nama: "Intan Nurhikmah", kelas: "XI", jurusan: "RPL", divisi: "Pengurus" },
+  { id: "p01", nama: "Intan Nurhikmah", kelas: "XI", divisi: "Pengurus" },
 ];
