@@ -334,7 +334,7 @@ export const FAQ: FaqItem[] = [
     id: "deadline",
     question: "Kapan deadline pendaftaran?",
     answer:
-      "Kuota terbatas setiap periode. Hubungi kontak di bagian bawah halaman ini untuk info terbaru seputar jadwal dan deadline pendaftaran.",
+      "Pendaftaran terbatas setiap periodenya. Namun, jangan khawatir selama bagian pendaftaran masih dapat di akses maka pendaftaran masih valid. Boleh juga menghubungi contact person yang tertera.",
   },
 ];
 
