@@ -5,6 +5,7 @@ export interface AbsenRecord {
   nama: string;
   kelas: string;
   divisi: string;
+  jurusan: string;
   status: StatusAbsen;
   keterangan?: string;
 }
