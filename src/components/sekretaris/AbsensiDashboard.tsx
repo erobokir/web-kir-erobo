@@ -191,7 +191,7 @@ function FormAbsensi({ onSaved }: { onSaved: (session: AbsensiSession) => void }
           <div key={record.peserta_id} className={`flex flex-col gap-2 p-3 sm:flex-row sm:items-center ${idx % 2 === 0 ? "bg-space-panel2/20" : ""}`}>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-ink">{record.nama}</p>
-              <p className="text-xs text-ink-dim">{record.kelas} · {record.jurusan} · {record.divisi}</p>
+              <p className="text-xs text-ink-dim">{record.kelas} · {record.jurusan ?? ""} · {record.divisi}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex gap-1">
@@ -328,7 +328,7 @@ function SessionCard({
             <div key={r.peserta_id} className="flex items-center justify-between gap-3 px-3 py-2">
               <div>
                 <p className="text-sm text-ink">{r.nama}</p>
-                <p className="text-[10px] text-ink-dim">{r.kelas} · {r.jurusan} · {r.divisi}</p>
+                <p className="text-[10px] text-ink-dim">{r.kelas} · {r.jurusan ?? ""} · {r.divisi}</p>
               </div>
               <div className="flex items-center gap-2">
                 <StatusBadge status={r.status} />

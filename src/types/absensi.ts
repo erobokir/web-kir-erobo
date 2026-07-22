@@ -4,8 +4,8 @@ export interface AbsenRecord {
   peserta_id: string;
   nama: string;
   kelas: string;
+  jurusan?: string;
   divisi: string;
-  jurusan: string;
   status: StatusAbsen;
   keterangan?: string;
 }
