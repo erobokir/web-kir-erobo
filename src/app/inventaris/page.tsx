@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/inventory/api";
 import { useInventoryAuth } from "@/lib/inventory/auth-context";
 import { roleLabel } from "@/components/inventory/Sidebar";
 import KeuanganWidget from "@/components/inventory/KeuanganWidget";
+import AbsensiWidget from "@/components/inventory/AbsensiWidget";
 import type { DashboardSummary, Item } from "@/types/inventory";
 
 export default function InventarisDashboardPage() {
@@ -65,6 +66,7 @@ export default function InventarisDashboardPage() {
       </section>
 
       {(user?.role === "ketua" || user?.role === "superadmin") && <KeuanganWidget />}
+      {(user?.role === "ketua" || user?.role === "superadmin") && <AbsensiWidget />}
 
       <section className="rounded-2xl border border-space-line bg-space-panel/60 p-5">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

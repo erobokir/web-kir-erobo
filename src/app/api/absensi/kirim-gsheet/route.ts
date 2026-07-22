@@ -27,7 +27,15 @@ export async function POST(request: Request) {
     session_id: session.id,
     tanggal: session.tanggal,
     kegiatan: session.kegiatan,
-    records: session.records,
+    records: session.records.map((r) => ({
+      peserta_id: r.peserta_id,
+      nama: r.nama,
+      kelas: r.kelas,
+      jurusan: r.jurusan ?? "",
+      divisi: r.divisi,
+      status: r.status,
+      keterangan: r.keterangan ?? "",
+    })),
   };
 
   const gRes = await fetch(gsheetUrl, {
@@ -36,9 +44,7 @@ export async function POST(request: Request) {
     body: JSON.stringify(payload),
   });
 
-  if (!gRes.ok) {
-    return jsonError("Gagal mengirim ke Google Sheets.", 502);
-  }
+  if (!gRes.ok) return jsonError("Gagal mengirim ke Google Sheets.", 502);
 
   const updatedSessions = sessions.map((s) =>
     s.id === session_id ? { ...s, dikirim_ke_gsheet: true } : s

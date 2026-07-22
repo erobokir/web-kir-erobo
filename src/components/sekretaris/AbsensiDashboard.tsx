@@ -45,12 +45,14 @@ function FormAbsensi({ onSaved }: { onSaved: (session: AbsensiSession) => void }
       peserta_id: p.id,
       nama: p.nama,
       kelas: p.kelas,
+      jurusan: p.jurusan,
       divisi: p.divisi,
       status: "hadir" as StatusAbsen,
       keterangan: "",
     }))
   );
   const [filterDivisi, setFilterDivisi] = useState<string>("Semua");
+  const [filterKelas, setFilterKelas] = useState<string>("Semua");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -71,8 +73,11 @@ function FormAbsensi({ onSaved }: { onSaved: (session: AbsensiSession) => void }
   }
 
   const divisiList = ["Semua", ...Array.from(new Set(DAFTAR_PESERTA.map((p) => p.divisi)))];
+  const kelasList = ["Semua", ...Array.from(new Set(DAFTAR_PESERTA.map((p) => p.kelas))).sort()];
   const filtered = records.filter(
-    (r) => filterDivisi === "Semua" || r.divisi === filterDivisi
+    (r) =>
+      (filterDivisi === "Semua" || r.divisi === filterDivisi) &&
+      (filterKelas === "Semua" || r.kelas === filterKelas)
   );
 
   const ringkasan = {
@@ -186,7 +191,7 @@ function FormAbsensi({ onSaved }: { onSaved: (session: AbsensiSession) => void }
           <div key={record.peserta_id} className={`flex flex-col gap-2 p-3 sm:flex-row sm:items-center ${idx % 2 === 0 ? "bg-space-panel2/20" : ""}`}>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-ink">{record.nama}</p>
-              <p className="text-xs text-ink-dim">{record.kelas} · {record.divisi}</p>
+              <p className="text-xs text-ink-dim">{record.kelas} · {record.jurusan} · {record.divisi}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex gap-1">
@@ -271,7 +276,7 @@ function SessionCard({
         <div className="flex items-center gap-2">
           {session.dikirim_ke_gsheet ? (
             <span className="rounded-full bg-signal-teal/10 px-2.5 py-1 text-xs font-medium text-signal-teal">
-              GSheet
+              ✓ GSheet
             </span>
           ) : (
             <button
@@ -323,7 +328,7 @@ function SessionCard({
             <div key={r.peserta_id} className="flex items-center justify-between gap-3 px-3 py-2">
               <div>
                 <p className="text-sm text-ink">{r.nama}</p>
-                <p className="text-[10px] text-ink-dim">{r.kelas} · {r.divisi}</p>
+                <p className="text-[10px] text-ink-dim">{r.kelas} · {r.jurusan} · {r.divisi}</p>
               </div>
               <div className="flex items-center gap-2">
                 <StatusBadge status={r.status} />
