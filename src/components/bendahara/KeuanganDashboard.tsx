@@ -2,7 +2,10 @@
 
 import { useCallback, useRef, useState } from "react";
 import { bendaharaLogoutAction } from "@/app/bendahara/actions";
+import KasPanel from "./KasPanel";
 import type { KeuanganItem, KeuanganSummary } from "@/types/keuangan";
+
+type ActiveTab = "transaksi" | "kas";
 
 function formatRupiah(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -29,12 +32,7 @@ function calcSummary(items: KeuanganItem[]): KeuanganSummary {
 }
 
 function StatCard({ label, value, accent }: { label: string; value: string; accent: "teal" | "gold" | "violet" | "cyan" }) {
-  const colors = {
-    teal: "text-signal-teal",
-    gold: "text-signal-gold",
-    violet: "text-signal-violet",
-    cyan: "text-signal-cyan",
-  };
+  const colors = { teal: "text-signal-teal", gold: "text-signal-gold", violet: "text-signal-violet", cyan: "text-signal-cyan" };
   return (
     <div className="rounded-2xl border border-space-line bg-space-panel/60 p-4">
       <p className="text-xs text-ink-dim">{label}</p>
@@ -173,13 +171,7 @@ function TransaksiRow({ item, onDelete }: { item: KeuanganItem; onDelete: (id: s
       <td className="py-2.5 pr-3 text-xs text-ink-muted whitespace-nowrap">{formatDate(item.timestamp)}</td>
       <td className="py-2.5 pr-3 text-sm text-ink">{item.keperluan}</td>
       <td className="py-2.5 pr-3">
-        <span
-          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-            item.status === "masuk"
-              ? "bg-signal-teal/10 text-signal-teal"
-              : "bg-red-500/10 text-red-400"
-          }`}
-        >
+        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${item.status === "masuk" ? "bg-signal-teal/10 text-signal-teal" : "bg-red-500/10 text-red-400"}`}>
           {item.status === "masuk" ? "↑ Masuk" : "↓ Keluar"}
         </span>
       </td>
@@ -207,6 +199,7 @@ export default function KeuanganDashboard({
 }) {
   const [items, setItems] = useState<KeuanganItem[]>(initialItems);
   const [filter, setFilter] = useState<"semua" | "masuk" | "keluar">("semua");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("transaksi");
 
   const summary = calcSummary(items);
 
@@ -248,55 +241,76 @@ export default function KeuanganDashboard({
         <StatCard label="Transaksi" value={String(summary.total_transaksi)} accent="violet" />
       </div>
 
-      {isEditor && <TambahForm onAdded={handleAdded} />}
-
-      <div className="rounded-2xl border border-space-line bg-space-panel/60 p-4">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="font-display text-base font-semibold text-ink">Riwayat Transaksi</h2>
-          <div className="flex gap-1">
-            {(["semua", "masuk", "keluar"] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`rounded-lg px-3 py-1 text-xs font-medium capitalize transition-colors ${
-                  filter === f
-                    ? "bg-signal-gold/20 text-signal-gold"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {filtered.length === 0 ? (
-          <div className="py-8 text-center">
-            <p className="text-xl">💸</p>
-            <p className="mt-1 text-sm text-ink-muted">Belum ada transaksi.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px] text-left text-sm">
-              <thead>
-                <tr className="border-b border-space-line text-xs text-ink-dim">
-                  <th className="py-2 pr-3 font-medium">ID</th>
-                  <th className="py-2 pr-3 font-medium">Waktu</th>
-                  <th className="py-2 pr-3 font-medium">Keperluan</th>
-                  <th className="py-2 pr-3 font-medium">Status</th>
-                  <th className="py-2 pr-3 font-medium">Jumlah</th>
-                  <th className="py-2 font-medium"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((item) => (
-                  <TransaksiRow key={item.id} item={item} onDelete={isEditor ? handleDelete : () => {}} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      <div className="flex gap-1 rounded-xl border border-space-line bg-space-panel/40 p-1">
+        {([
+          { key: "transaksi", label: "💸 Transaksi" },
+          { key: "kas", label: "💰 Uang Kas" },
+        ] as const).map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key)}
+            className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              activeTab === key
+                ? "bg-signal-gold text-space shadow"
+                : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
+
+      {activeTab === "transaksi" && (
+        <>
+          {isEditor && <TambahForm onAdded={handleAdded} />}
+          <div className="rounded-2xl border border-space-line bg-space-panel/60 p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="font-display text-base font-semibold text-ink">Riwayat Transaksi</h2>
+              <div className="flex gap-1">
+                {(["semua", "masuk", "keluar"] as const).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFilter(f)}
+                    className={`rounded-lg px-3 py-1 text-xs font-medium capitalize transition-colors ${
+                      filter === f ? "bg-signal-gold/20 text-signal-gold" : "text-ink-muted hover:text-ink"
+                    }`}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {filtered.length === 0 ? (
+              <div className="py-8 text-center">
+                <p className="text-xl">💸</p>
+                <p className="mt-1 text-sm text-ink-muted">Belum ada transaksi.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[600px] text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-space-line text-xs text-ink-dim">
+                      <th className="py-2 pr-3 font-medium">ID</th>
+                      <th className="py-2 pr-3 font-medium">Waktu</th>
+                      <th className="py-2 pr-3 font-medium">Keperluan</th>
+                      <th className="py-2 pr-3 font-medium">Status</th>
+                      <th className="py-2 pr-3 font-medium">Jumlah</th>
+                      <th className="py-2 font-medium"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filtered.map((item) => (
+                      <TransaksiRow key={item.id} item={item} onDelete={isEditor ? handleDelete : () => {}} />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {activeTab === "kas" && <KasPanel />}
     </div>
   );
 }
