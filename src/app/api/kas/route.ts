@@ -1,7 +1,8 @@
 import { isBendaharaLoggedIn } from "@/lib/bendahara/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
-import type { KasSession, KasRecord } from "@/types/keuangan";
+import type { KasRecord, KasSession } from "@/types/keuangan";
+import type { KeuanganItem } from "@/types/keuangan";
 
 function jsonError(message: string, status = 400) {
   return Response.json({ message }, { status });
@@ -80,10 +81,22 @@ export async function PATCH(request: Request) {
   if (!session_id || !peserta_id) return jsonError("session_id dan peserta_id wajib diisi.", 400);
 
   const supabase = createSupabaseAdminClient();
-  const { data: existing } = await supabase.from("kas_data").select("*").eq("id", "main").maybeSingle();
-  if (!existing) return jsonError("Data tidak ditemukan.", 404);
 
-  const sessions: KasSession[] = existing.sessions ?? [];
+  const { data: kasExisting } = await supabase.from("kas_data").select("*").eq("id", "main").maybeSingle();
+  if (!kasExisting) return jsonError("Data tidak ditemukan.", 404);
+
+  const sessions: KasSession[] = kasExisting.sessions ?? [];
+  const session = sessions.find((s) => s.id === session_id);
+  if (!session) return jsonError("Sesi tidak ditemukan.", 404);
+
+  const record = session.records.find((r) => r.peserta_id === peserta_id);
+  if (!record) return jsonError("Peserta tidak ditemukan.", 404);
+
+  const prevStatus = record.status;
+  const newStatus = (status as KasRecord["status"]) ?? prevStatus;
+  const nominal = session.nominal_per_orang;
+  const now = new Date().toISOString();
+
   const updatedSessions = sessions.map((s) => {
     if (s.id !== session_id) return s;
     return {
@@ -92,9 +105,9 @@ export async function PATCH(request: Request) {
         r.peserta_id === peserta_id
           ? {
               ...r,
-              status: (status as KasRecord["status"]) ?? r.status,
-              jumlah: status === "lunas" ? s.nominal_per_orang : 0,
-              tanggal_bayar: tanggal_bayar ?? r.tanggal_bayar,
+              status: newStatus,
+              jumlah: newStatus === "lunas" ? nominal : 0,
+              tanggal_bayar: newStatus === "lunas" ? (tanggal_bayar ?? now) : undefined,
               keterangan: keterangan ?? r.keterangan,
             }
           : r
@@ -102,15 +115,60 @@ export async function PATCH(request: Request) {
     };
   });
 
-  const { data, error } = await supabase
+  const { data: kasData, error: kasError } = await supabase
     .from("kas_data")
-    .update({ sessions: updatedSessions, updated_at: new Date().toISOString() })
+    .update({ sessions: updatedSessions, updated_at: now })
     .eq("id", "main")
     .select()
     .single();
 
-  if (error) return jsonError(error.message, 500);
-  return Response.json({ kas: data });
+  if (kasError) return jsonError(kasError.message, 500);
+
+  if (prevStatus !== newStatus) {
+    const { data: keuanganExisting } = await supabase
+      .from("keuangan_data")
+      .select("*")
+      .eq("id", "main")
+      .maybeSingle();
+
+    const currentItems: KeuanganItem[] = keuanganExisting?.items ?? [];
+
+    if (newStatus === "lunas") {
+      const newItem: KeuanganItem = {
+        id: `k${Date.now()}`,
+        timestamp: now,
+        keperluan: `Kas ${session.periode} — ${record.nama}`,
+        status: "masuk",
+        jumlah: nominal,
+        created_at: now,
+      };
+      await supabase
+        .from("keuangan_data")
+        .upsert({
+          id: "main",
+          items: [...currentItems, newItem],
+          updated_at: now,
+        });
+    } else if (prevStatus === "lunas" && newStatus === "belum") {
+      const revertItem: KeuanganItem = {
+        id: `k${Date.now()}`,
+        timestamp: now,
+        keperluan: `Batal kas ${session.periode} — ${record.nama}`,
+        status: "keluar",
+        jumlah: nominal,
+        created_at: now,
+      };
+      await supabase
+        .from("keuangan_data")
+        .upsert({
+          id: "main",
+          items: [...currentItems, revertItem],
+          updated_at: now,
+        });
+    }
+  }
+
+  return Response.json({ kas: kasData });
 }
 
 export async function DELETE(request: Request) {

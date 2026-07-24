@@ -37,7 +37,6 @@ function BuatSessionForm({ onCreated }: { onCreated: (s: KasSession) => void }) 
     if (!periode.trim() || !nominal) { setError("Semua field wajib diisi."); return; }
     setError("");
     setLoading(true);
-
     const records: KasRecord[] = DAFTAR_PESERTA.map((p) => ({
       peserta_id: p.id,
       nama: p.nama,
@@ -46,7 +45,6 @@ function BuatSessionForm({ onCreated }: { onCreated: (s: KasSession) => void }) 
       status: "belum" as const,
       jumlah: 0,
     }));
-
     try {
       const res = await fetch("/api/kas", {
         method: "POST",
@@ -127,20 +125,27 @@ function KasSessionCard({
   session,
   onDelete,
   onUpdateRecord,
+  onKirimGsheet,
 }: {
   session: KasSession;
   onDelete: (id: string) => void;
   onUpdateRecord: (session_id: string, peserta_id: string, status: KasRecord["status"]) => void;
+  onKirimGsheet: (id: string) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<"semua" | "lunas" | "belum">("semua");
+  const [sending, setSending] = useState(false);
+
+  async function handleKirim() {
+    setSending(true);
+    await onKirimGsheet(session.id);
+    setSending(false);
+  }
 
   const lunas = session.records.filter((r) => r.status === "lunas").length;
   const belum = session.records.filter((r) => r.status === "belum").length;
   const terkumpul = session.records.filter((r) => r.status === "lunas").reduce((a, r) => a + r.jumlah, 0);
-
-  const filtered =
-    filter === "semua" ? session.records : session.records.filter((r) => r.status === filter);
+  const filtered = filter === "semua" ? session.records : session.records.filter((r) => r.status === filter);
 
   return (
     <div className="rounded-2xl border border-space-line bg-space-panel/60 p-4">
@@ -151,12 +156,25 @@ function KasSessionCard({
             {formatRupiah(session.nominal_per_orang)}/orang · {formatDate(session.created_at)}
           </p>
         </div>
-        <button
-          onClick={() => confirm("Hapus periode kas ini?") && onDelete(session.id)}
-          className="text-xs text-ink-dim hover:text-red-400"
-        >
-          Hapus
-        </button>
+        <div className="flex items-center gap-2">
+          {session.dikirim_ke_gsheet ? (
+            <span className="rounded-full bg-signal-teal/10 px-2.5 py-1 text-xs font-medium text-signal-teal">✓ GSheet</span>
+          ) : (
+            <button
+              onClick={handleKirim}
+              disabled={sending}
+              className="rounded-full bg-space-panel2 px-2.5 py-1 text-xs text-ink-muted hover:text-ink disabled:opacity-60"
+            >
+              {sending ? "Mengirim…" : "Kirim GSheet"}
+            </button>
+          )}
+          <button
+            onClick={() => confirm("Hapus periode kas ini?") && onDelete(session.id)}
+            className="text-xs text-ink-dim hover:text-red-400"
+          >
+            Hapus
+          </button>
+        </div>
       </div>
 
       <div className="my-3 grid grid-cols-3 gap-2">
@@ -208,11 +226,7 @@ function KasSessionCard({
                     <span className="text-[10px] text-ink-dim">{formatDate(r.tanggal_bayar)}</span>
                   )}
                   <button
-                    onClick={() => onUpdateRecord(
-                      session.id,
-                      r.peserta_id,
-                      r.status === "lunas" ? "belum" : "lunas"
-                    )}
+                    onClick={() => onUpdateRecord(session.id, r.peserta_id, r.status === "lunas" ? "belum" : "lunas")}
                     className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                       r.status === "lunas"
                         ? "bg-signal-teal/15 text-signal-teal hover:bg-signal-teal/25"
@@ -243,10 +257,7 @@ export default function KasPanel() {
   }, []);
 
   const summary = calcKasSummary(sessions);
-
-  const sorted = [...sessions].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
+  const sorted = [...sessions].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   const handleCreated = useCallback((s: KasSession) => {
     setSessions((prev) => [...prev, s]);
@@ -257,11 +268,7 @@ export default function KasPanel() {
     setSessions((prev) => prev.filter((s) => s.id !== id));
   }, []);
 
-  const handleUpdateRecord = useCallback(async (
-    session_id: string,
-    peserta_id: string,
-    status: KasRecord["status"]
-  ) => {
+  const handleUpdateRecord = useCallback(async (session_id: string, peserta_id: string, status: KasRecord["status"]) => {
     const res = await fetch("/api/kas", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -275,6 +282,20 @@ export default function KasPanel() {
     if (res.ok) {
       const { kas } = await res.json();
       setSessions(kas.sessions);
+    }
+  }, []);
+
+  const handleKirimGsheet = useCallback(async (id: string) => {
+    const res = await fetch("/api/kas/kirim-gsheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: id }),
+    });
+    if (res.ok) {
+      setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, dikirim_ke_gsheet: true } : s)));
+    } else {
+      const j = await res.json();
+      alert(j.message ?? "Gagal mengirim ke Google Sheets.");
     }
   }, []);
 
@@ -324,6 +345,7 @@ export default function KasPanel() {
           session={s}
           onDelete={handleDelete}
           onUpdateRecord={handleUpdateRecord}
+          onKirimGsheet={handleKirimGsheet}
         />
       ))}
     </div>

@@ -178,6 +178,11 @@ function TransaksiRow({ item, onDelete }: { item: KeuanganItem; onDelete: (id: s
       <td className={`py-2.5 pr-3 text-sm font-semibold tabular-nums ${item.status === "masuk" ? "text-signal-teal" : "text-red-400"}`}>
         {item.status === "masuk" ? "+" : "-"}{formatRupiah(item.jumlah)}
       </td>
+      <td className="py-2.5 pr-3">
+        {item.dikirim_ke_gsheet && (
+          <span className="rounded-full bg-signal-teal/10 px-2 py-0.5 text-[10px] text-signal-teal">✓ GSheet</span>
+        )}
+      </td>
       <td className="py-2.5 text-right">
         <button
           onClick={() => confirm("Hapus transaksi ini?") && onDelete(item.id)}
@@ -200,6 +205,32 @@ export default function KeuanganDashboard({
   const [items, setItems] = useState<KeuanganItem[]>(initialItems);
   const [filter, setFilter] = useState<"semua" | "masuk" | "keluar">("semua");
   const [activeTab, setActiveTab] = useState<ActiveTab>("transaksi");
+  const [kirimLoading, setKirimLoading] = useState(false);
+  const [kirimStatus, setKirimStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  async function handleKirimGsheet() {
+    const today = new Date().toISOString().slice(0, 10);
+    setKirimLoading(true);
+    setKirimStatus(null);
+    try {
+      const res = await fetch("/api/keuangan/kirim-gsheet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tanggal: today }),
+      });
+      const j = await res.json();
+      if (!res.ok) { setKirimStatus({ ok: false, msg: j.message ?? "Gagal." }); return; }
+      setKirimStatus({ ok: true, msg: `${j.total} transaksi hari ini berhasil dikirim.` });
+      setItems((prev) =>
+        prev.map((i) =>
+          new Date(i.timestamp).toISOString().slice(0, 10) === today
+            ? { ...i, dikirim_ke_gsheet: true }
+            : i
+        )
+      );
+    } catch { setKirimStatus({ ok: false, msg: "Terjadi kesalahan." }); }
+    finally { setKirimLoading(false); }
+  }
 
   const summary = calcSummary(items);
 
@@ -262,6 +293,22 @@ export default function KeuanganDashboard({
 
       {activeTab === "transaksi" && (
         <>
+          {isEditor && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleKirimGsheet}
+                disabled={kirimLoading}
+                className="rounded-lg border border-space-line px-3 py-1 text-xs text-ink-muted hover:text-ink disabled:opacity-60"
+              >
+                {kirimLoading ? "Mengirim…" : "Kirim GSheet Hari Ini"}
+              </button>
+            </div>
+          )}
+          {kirimStatus && (
+            <p className={`text-xs ${kirimStatus.ok ? "text-signal-teal" : "text-red-400"}`}>
+              {kirimStatus.msg}
+            </p>
+          )}
           {isEditor && <TambahForm onAdded={handleAdded} />}
           <div className="rounded-2xl border border-space-line bg-space-panel/60 p-4">
             <div className="mb-4 flex items-center justify-between gap-3">
@@ -295,6 +342,7 @@ export default function KeuanganDashboard({
                       <th className="py-2 pr-3 font-medium">Keperluan</th>
                       <th className="py-2 pr-3 font-medium">Status</th>
                       <th className="py-2 pr-3 font-medium">Jumlah</th>
+                      <th className="py-2 pr-3 font-medium"></th>
                       <th className="py-2 font-medium"></th>
                     </tr>
                   </thead>

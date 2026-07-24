@@ -8,6 +8,7 @@ export interface KeuanganItem {
   status: StatusKeuangan;
   jumlah: number;
   created_at: string;
+  dikirim_ke_gsheet?: boolean;
 }
 
 export interface KasRecord {
@@ -27,6 +28,7 @@ export interface KasSession {
   nominal_per_orang: number;
   records: KasRecord[];
   created_at: string;
+  dikirim_ke_gsheet?: boolean;
 }
 
 export interface KeuanganData {
