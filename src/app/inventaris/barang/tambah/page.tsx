@@ -85,7 +85,7 @@ function TambahBarangForm() {
     <div className="mx-auto max-w-lg space-y-6">
       <header>
         <Link
-          href="/inventaris"
+          href="/inventaris/barang"
           className="mb-4 inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink transition-colors"
         >
           Kembali
