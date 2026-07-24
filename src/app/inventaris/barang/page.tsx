@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/inventory/api";
 import { useInventoryAuth } from "@/lib/inventory/auth-context";
 import { roleLabel } from "@/components/inventory/Sidebar";
 import KeuanganWidget from "@/components/inventory/KeuanganWidget";
+import AbsensiWidget from "@/components/inventory/AbsensiWidget";
 import type { DashboardSummary, Item } from "@/types/inventory";
 
 export default function InventarisDashboardPage() {
@@ -65,16 +66,27 @@ export default function InventarisDashboardPage() {
       </section>
 
       {(user?.role === "ketua" || user?.role === "superadmin") && <KeuanganWidget />}
+      {(user?.role === "ketua" || user?.role === "superadmin") && <AbsensiWidget />}
 
       <section className="rounded-2xl border border-space-line bg-space-panel/60 p-5">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="font-display text-lg font-semibold text-ink">Daftar Barang</h2>
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Cari nama barang..."
-            className="w-full rounded-lg border border-space-line bg-space-panel2 px-3 py-2 text-sm text-ink placeholder:text-ink-dim focus:border-signal-violet focus:outline-none sm:w-64"
-          />
+          <div className="flex items-center gap-2">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Cari nama barang..."
+              className="w-full rounded-lg border border-space-line bg-space-panel2 px-3 py-2 text-sm text-ink placeholder:text-ink-dim focus:border-signal-violet focus:outline-none sm:w-64"
+            />
+            {(user?.role === "admin" || user?.role === "ketua" || user?.role === "superadmin") && (
+              <Link
+                href="/inventaris/barang/tambah"
+                className="shrink-0 rounded-lg bg-signal-violet px-3 py-2 text-sm font-medium text-white hover:opacity-90"
+              >
+                + Tambah
+              </Link>
+            )}
+          </div>
         </div>
 
         {loading ? (
