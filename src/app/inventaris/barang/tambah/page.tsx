@@ -84,6 +84,12 @@ function TambahBarangForm() {
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <header>
+        <Link
+          href="/inventaris"
+          className="mb-4 inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink transition-colors"
+        >
+          ← Kembali
+        </Link>
         <p className="text-xs uppercase tracking-widest text-signal-cyan">DAFTAR BARANG</p>
         <h1 className="mt-1 font-display text-2xl font-semibold text-ink">Tambah Barang Baru</h1>
         <p className="mt-1 text-sm text-ink-muted">
