@@ -71,12 +71,22 @@ export default function InventarisDashboardPage() {
       <section className="rounded-2xl border border-space-line bg-space-panel/60 p-5">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="font-display text-lg font-semibold text-ink">Daftar Barang</h2>
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Cari nama barang..."
-            className="w-full rounded-lg border border-space-line bg-space-panel2 px-3 py-2 text-sm text-ink placeholder:text-ink-dim focus:border-signal-violet focus:outline-none sm:w-64"
-          />
+          <div className="flex items-center gap-2">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Cari nama barang..."
+              className="w-full rounded-lg border border-space-line bg-space-panel2 px-3 py-2 text-sm text-ink placeholder:text-ink-dim focus:border-signal-violet focus:outline-none sm:w-64"
+            />
+            {(user?.role === "divisi" || user?.role === "superadmin") && (
+              <Link
+                href="/inventaris/barang/tambah"
+                className="shrink-0 rounded-lg bg-signal-violet px-3 py-2 text-sm font-medium text-white hover:opacity-90"
+              >
+                + Tambah
+              </Link>
+            )}
+          </div>
         </div>
 
         {loading ? (
@@ -92,12 +102,16 @@ export default function InventarisDashboardPage() {
                   <th className="py-2 pr-4 font-medium">Nama Barang</th>
                   <th className="py-2 pr-4 font-medium">Kategori</th>
                   <th className="py-2 pr-4 font-medium">Stok</th>
+                  <th className="py-2 pr-4 font-medium">Kondisi</th>
                   <th className="py-2 pr-4 font-medium">Lokasi</th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((item) => (
-                  <tr key={item.id} className="border-b border-space-line/60">
+                  <tr key={item.id} className={`border-b border-space-line/60 ${
+                    item.kondisi === "habis" ? "bg-signal-gold/5" :
+                    item.kondisi === "rusak" ? "bg-red-500/5" : ""
+                  }`}>
                     <td className="py-2.5 pr-4 font-mono text-xs text-signal-cyan">
                       <Link href={`/inventaris/barang/${item.id}`}>{item.code}</Link>
                     </td>
@@ -108,14 +122,19 @@ export default function InventarisDashboardPage() {
                     </td>
                     <td className="py-2.5 pr-4 text-ink-muted">{item.category || "-"}</td>
                     <td className="py-2.5 pr-4">
-                      <span
-                        className={
-                          item.quantity <= item.min_stock
-                            ? "font-semibold text-signal-gold"
-                            : "text-ink"
-                        }
-                      >
+                      <span className={item.quantity <= item.min_stock ? "font-semibold text-signal-gold" : "text-ink"}>
                         {item.quantity} {item.unit}
+                      </span>
+                    </td>
+                    <td className="py-2.5 pr-4">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                        !item.kondisi || item.kondisi === "baik"
+                          ? "bg-signal-teal/10 text-signal-teal"
+                          : item.kondisi === "habis"
+                            ? "bg-signal-gold/10 text-signal-gold"
+                            : "bg-red-500/10 text-red-400"
+                      }`}>
+                        {item.kondisi ?? "baik"}
                       </span>
                     </td>
                     <td className="py-2.5 pr-4 text-ink-muted">{item.location || "-"}</td>

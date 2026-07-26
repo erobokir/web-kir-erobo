@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch, ApiError } from "@/lib/inventory/api";
 import { useInventoryAuth } from "@/lib/inventory/auth-context";
-import type { Item, ItemLog } from "@/types/inventory";
+import type { Item, ItemLog, KondisiBarang } from "@/types/inventory";
 
 export default function BarangDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -15,6 +15,8 @@ export default function BarangDetailPage({ params }: { params: { id: string } })
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [kondisiLoading, setKondisiLoading] = useState(false);
+  const [kondisiMsg, setKondisiMsg] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -32,6 +34,7 @@ export default function BarangDetailPage({ params }: { params: { id: string } })
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function loadQr() {
@@ -52,6 +55,31 @@ export default function BarangDetailPage({ params }: { params: { id: string } })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Gagal menghapus barang.");
       setDeleting(false);
+    }
+  }
+
+  async function handleUpdateKondisi(kondisi: KondisiBarang) {
+    if (!item) return;
+    setKondisiLoading(true);
+    setKondisiMsg(null);
+    try {
+      const isNoStock = kondisi === "habis" || kondisi === "rusak";
+      await apiFetch("/api/stock/masuk", {
+        method: "POST",
+        body: {
+          item_id: item.id,
+          quantity: 0,
+          kondisi,
+          note: `Kondisi diperbarui: ${kondisi}`,
+        },
+      });
+      setItem((prev) => prev ? { ...prev, kondisi } : prev);
+      setKondisiMsg(`Kondisi berhasil diperbarui menjadi ${kondisi}.${isNoStock ? " Stok tidak berubah." : ""}`);
+      await load();
+    } catch (err) {
+      setKondisiMsg(err instanceof ApiError ? err.message : "Gagal memperbarui kondisi.");
+    } finally {
+      setKondisiLoading(false);
     }
   }
 
@@ -79,6 +107,18 @@ export default function BarangDetailPage({ params }: { params: { id: string } })
           />
           <Info label="Batas Minimum" value={`${item.min_stock} ${item.unit}`} />
           <Info label="Lokasi" value={item.location || "-"} />
+          <div>
+            <p className="text-xs text-ink-dim">Kondisi</p>
+            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+              !item.kondisi || item.kondisi === "baik"
+                ? "bg-signal-teal/10 text-signal-teal"
+                : item.kondisi === "habis"
+                  ? "bg-signal-gold/10 text-signal-gold"
+                  : "bg-red-500/10 text-red-400"
+            }`}>
+              {item.kondisi ?? "baik"}
+            </span>
+          </div>
           {item.description && (
             <div className="col-span-2 sm:col-span-3">
               <p className="text-xs text-ink-dim">Deskripsi</p>
@@ -86,6 +126,38 @@ export default function BarangDetailPage({ params }: { params: { id: string } })
             </div>
           )}
         </dl>
+
+        {(user?.role === "superadmin" || user?.role === "divisi") && (
+          <div className="rounded-2xl border border-space-line bg-space-panel/60 p-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-ink-dim">Perbarui Kondisi</p>
+            <div className="flex gap-2">
+              {(["baik", "habis", "rusak"] as KondisiBarang[]).map((k) => (
+                <button
+                  key={k}
+                  onClick={() => handleUpdateKondisi(k)}
+                  disabled={kondisiLoading || item.kondisi === k}
+                  className={`flex-1 rounded-lg border px-3 py-2 text-xs font-medium capitalize transition-colors disabled:opacity-50 ${
+                    item.kondisi === k
+                      ? k === "baik"
+                        ? "border-signal-teal bg-signal-teal/20 text-signal-teal"
+                        : k === "habis"
+                          ? "border-signal-gold bg-signal-gold/20 text-signal-gold"
+                          : "border-red-500 bg-red-500/20 text-red-400"
+                      : "border-space-line text-ink-muted hover:text-ink"
+                  }`}
+                >
+                  {k}
+                </button>
+              ))}
+            </div>
+            {kondisiMsg && (
+              <p className="mt-2 text-xs text-signal-teal">{kondisiMsg}</p>
+            )}
+            <p className="mt-2 text-[10px] text-ink-dim">
+              Kondisi habis/rusak dicatat sebagai transaksi tanpa mengubah kuantitas stok.
+            </p>
+          </div>
+        )}
 
         {user?.role === "superadmin" && (
           <div className="flex flex-wrap gap-2">

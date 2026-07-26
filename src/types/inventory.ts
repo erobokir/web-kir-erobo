@@ -10,6 +10,8 @@ export interface InventoryUser {
   created_at?: string;
 }
 
+export type KondisiBarang = "baik" | "habis" | "rusak";
+
 export interface Item {
   id: string;
   code: string;
@@ -18,6 +20,7 @@ export interface Item {
   unit: string;
   quantity: number;
   min_stock: number;
+  kondisi?: KondisiBarang | null;
   location?: string | null;
   image_url?: string | null;
   description?: string | null;
