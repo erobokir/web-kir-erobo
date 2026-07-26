@@ -63,4 +63,5 @@ export const DAFTAR_PESERTA: Peserta[] = [
   { id: "s045", nama: "Tiko Ardian Kusumah", kelas: "X", jurusan: "TKJ", divisi: "RETEK" },
   { id: "s046", nama: "YUDA DWI PUTRA", kelas: "X", jurusan: "TP", divisi: "RETEK" },
   { id: "p010", nama: "Early Janeuella Aqilah", kelas: "XI", jurusan: "DPIB", divisi: "Pengurus" },
+  { id: "s047", nama: "Ratih Fauziah", kelas: "X", jurusan: "SIJA", divisi: "AI" },
 ];
