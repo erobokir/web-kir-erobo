@@ -207,29 +207,42 @@ export default function KeuanganDashboard({
   const [activeTab, setActiveTab] = useState<ActiveTab>("transaksi");
   const [kirimLoading, setKirimLoading] = useState(false);
   const [kirimStatus, setKirimStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [migrasiLoading, setMigrasiLoading] = useState(false);
+  const [migrasiStatus, setMigrasiStatus] = useState<{ ok: boolean; msg: string } | null>(null);
 
   async function handleKirimGsheet() {
-    const today = new Date().toISOString().slice(0, 10);
     setKirimLoading(true);
     setKirimStatus(null);
     try {
-      const res = await fetch("/api/keuangan/kirim-gsheet", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tanggal: today }),
-      });
+      const res = await fetch("/api/keuangan/kirim-gsheet", { method: "POST" });
       const j = await res.json();
       if (!res.ok) { setKirimStatus({ ok: false, msg: j.message ?? "Gagal." }); return; }
-      setKirimStatus({ ok: true, msg: `${j.total} transaksi hari ini berhasil dikirim.` });
-      setItems((prev) =>
-        prev.map((i) =>
-          new Date(i.timestamp).toISOString().slice(0, 10) === today
-            ? { ...i, dikirim_ke_gsheet: true }
-            : i
-        )
-      );
+      if (j.total === 0) {
+        setKirimStatus({ ok: true, msg: "Semua transaksi sudah pernah dikirim." });
+      } else {
+        setKirimStatus({ ok: true, msg: `${j.total} transaksi berhasil dikirim ke GSheet.` });
+        setItems((prev) => prev.map((i) => !i.dikirim_ke_gsheet ? { ...i, dikirim_ke_gsheet: true } : i));
+      }
     } catch { setKirimStatus({ ok: false, msg: "Terjadi kesalahan." }); }
     finally { setKirimLoading(false); }
+  }
+
+  async function handleMigrasi() {
+    if (!confirm("Migrasi semua data kas lama yang sudah lunas ke saldo? Data yang sudah ada tidak akan duplikat.")) return;
+    setMigrasiLoading(true);
+    setMigrasiStatus(null);
+    try {
+      const res = await fetch("/api/kas/migrasi", { method: "POST" });
+      const j = await res.json();
+      if (!res.ok) { setMigrasiStatus({ ok: false, msg: j.message ?? "Gagal." }); return; }
+      setMigrasiStatus({
+        ok: true,
+        msg: j.migrated > 0
+          ? `${j.migrated} data dimigrasi${j.dikirim_ke_gsheet ? " & dikirim ke GSheet." : ". Klik Kirim GSheet untuk sinkronisasi."}`
+          : j.message ?? "Semua data sudah tersinkronisasi.",
+      });
+    } catch { setMigrasiStatus({ ok: false, msg: "Terjadi kesalahan." }); }
+    finally { setMigrasiLoading(false); }
   }
 
   const summary = calcSummary(items);
@@ -294,20 +307,46 @@ export default function KeuanganDashboard({
       {activeTab === "transaksi" && (
         <>
           {isEditor && (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleKirimGsheet}
-                disabled={kirimLoading}
-                className="rounded-lg border border-space-line px-3 py-1 text-xs text-ink-muted hover:text-ink disabled:opacity-60"
-              >
-                {kirimLoading ? "Mengirim…" : "Kirim GSheet Hari Ini"}
-              </button>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-space-line bg-space-panel2/30 px-4 py-3">
+                <p className="text-xs text-ink-dim">
+                  Kirim semua transaksi yang belum dikirim ke Google Sheets
+                </p>
+                <div className="flex items-center gap-2">
+                  {kirimStatus && (
+                    <p className={`text-xs ${kirimStatus.ok ? "text-signal-teal" : "text-red-400"}`}>
+                      {kirimStatus.msg}
+                    </p>
+                  )}
+                  <button
+                    onClick={handleKirimGsheet}
+                    disabled={kirimLoading}
+                    className="shrink-0 rounded-lg border border-space-line px-3 py-1.5 text-xs text-ink-muted hover:text-ink disabled:opacity-60"
+                  >
+                    {kirimLoading ? "Mengirim…" : "Kirim GSheet"}
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-space-line bg-space-panel2/30 px-4 py-3">
+                <p className="text-xs text-ink-dim">
+                  Sinkronisasi data kas lama yang sudah lunas ke saldo
+                </p>
+                <div className="flex items-center gap-2">
+                  {migrasiStatus && (
+                    <p className={`text-xs ${migrasiStatus.ok ? "text-signal-teal" : "text-red-400"}`}>
+                      {migrasiStatus.msg}
+                    </p>
+                  )}
+                  <button
+                    onClick={handleMigrasi}
+                    disabled={migrasiLoading}
+                    className="shrink-0 rounded-lg border border-space-line px-3 py-1.5 text-xs text-ink-muted hover:text-ink disabled:opacity-60"
+                  >
+                    {migrasiLoading ? "Migrasi…" : "Migrasi Data Lama"}
+                  </button>
+                </div>
+              </div>
             </div>
-          )}
-          {kirimStatus && (
-            <p className={`text-xs ${kirimStatus.ok ? "text-signal-teal" : "text-red-400"}`}>
-              {kirimStatus.msg}
-            </p>
           )}
           {isEditor && <TambahForm onAdded={handleAdded} />}
           <div className="rounded-2xl border border-space-line bg-space-panel/60 p-4">

@@ -248,6 +248,8 @@ function KasSessionCard({
 export default function KasPanel() {
   const [sessions, setSessions] = useState<KasSession[]>([]);
   const [loading, setLoading] = useState(true);
+  const [migrasiLoading, setMigrasiLoading] = useState(false);
+  const [migrasiStatus, setMigrasiStatus] = useState<{ ok: boolean; msg: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/kas")
@@ -299,6 +301,27 @@ export default function KasPanel() {
     }
   }, []);
 
+  async function handleMigrasi() {
+    if (!confirm("Migrasi semua data kas lama yang sudah lunas ke saldo keuangan? Data yang sudah ada tidak akan duplikat.")) return;
+    setMigrasiLoading(true);
+    setMigrasiStatus(null);
+    try {
+      const res = await fetch("/api/kas/migrasi", { method: "POST" });
+      const j = await res.json();
+      if (!res.ok) { setMigrasiStatus({ ok: false, msg: j.message ?? "Gagal." }); return; }
+      setMigrasiStatus({
+        ok: true,
+        msg: j.migrated > 0
+          ? `${j.migrated} transaksi kas berhasil dimigrasi ke saldo.`
+          : j.message ?? "Semua data sudah tersinkronisasi.",
+      });
+    } catch {
+      setMigrasiStatus({ ok: false, msg: "Terjadi kesalahan." });
+    } finally {
+      setMigrasiLoading(false);
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -325,6 +348,24 @@ export default function KasPanel() {
           <p className="mt-0.5 font-display text-base font-semibold text-signal-violet">
             {loading ? "—" : summary.total_sessions}
           </p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-space-line bg-space-panel2/30 px-4 py-3">
+        <p className="text-xs text-ink-dim">Sinkronisasi data kas lama ke saldo</p>
+        <div className="flex items-center gap-2">
+          {migrasiStatus && (
+            <p className={`text-xs ${migrasiStatus.ok ? "text-signal-teal" : "text-red-400"}`}>
+              {migrasiStatus.msg}
+            </p>
+          )}
+          <button
+            onClick={handleMigrasi}
+            disabled={migrasiLoading}
+            className="rounded-lg border border-space-line px-3 py-1.5 text-xs text-ink-muted hover:text-ink disabled:opacity-60"
+          >
+            {migrasiLoading ? "Migrasi…" : "Migrasi Data Lama"}
+          </button>
         </div>
       </div>
 

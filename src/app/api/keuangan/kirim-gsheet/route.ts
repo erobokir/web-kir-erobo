@@ -6,11 +6,8 @@ function jsonError(message: string, status = 400) {
   return Response.json({ message }, { status });
 }
 
-export async function POST(request: Request) {
+export async function POST() {
   if (!isBendaharaLoggedIn()) return jsonError("Harus login sebagai bendahara.", 401);
-
-  const { tanggal } = await request.json().catch(() => ({}));
-  if (!tanggal) return jsonError("tanggal wajib diisi.", 400);
 
   const gsheetUrl = process.env.GSHEET_KEUANGAN_WEBHOOK_URL;
   if (!gsheetUrl) return jsonError("GSHEET_KEUANGAN_WEBHOOK_URL belum diset.", 500);
@@ -24,24 +21,21 @@ export async function POST(request: Request) {
   if (!existing) return jsonError("Data keuangan tidak ditemukan.", 404);
 
   const items: KeuanganItem[] = existing.items ?? [];
-  const filtered = items.filter(
-    (i) => new Date(i.timestamp).toISOString().slice(0, 10) === tanggal
-  );
-  if (filtered.length === 0) return jsonError("Tidak ada transaksi pada tanggal ini.", 404);
+  const belumDikirim = items.filter((i) => !i.dikirim_ke_gsheet);
 
-  const payload = { tanggal, items: filtered };
+  if (belumDikirim.length === 0) {
+    return Response.json({ success: true, total: 0, message: "Semua transaksi sudah pernah dikirim." });
+  }
 
   const gRes = await fetch(gsheetUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ items: belumDikirim }),
   });
   if (!gRes.ok) return jsonError("Gagal mengirim ke Google Sheets.", 502);
 
   const updatedItems = items.map((i) =>
-    new Date(i.timestamp).toISOString().slice(0, 10) === tanggal
-      ? { ...i, dikirim_ke_gsheet: true }
-      : i
+    !i.dikirim_ke_gsheet ? { ...i, dikirim_ke_gsheet: true } : i
   );
 
   await supabase
@@ -49,5 +43,5 @@ export async function POST(request: Request) {
     .update({ items: updatedItems, updated_at: new Date().toISOString() })
     .eq("id", "main");
 
-  return Response.json({ success: true, total: filtered.length });
+  return Response.json({ success: true, total: belumDikirim.length });
 }
