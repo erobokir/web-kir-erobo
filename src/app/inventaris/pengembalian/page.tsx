@@ -8,6 +8,7 @@ import type { BorrowRequest } from "@/types/inventory";
 
 const CONDITIONS = [
   { value: "baik", label: "Baik (stok bertambah kembali)" },
+  { value: "habis", label: "Habis (stok tidak bertambah)" },
   { value: "rusak_ringan", label: "Rusak Ringan" },
   { value: "rusak_berat", label: "Rusak Berat" },
   { value: "hilang", label: "Hilang" },
