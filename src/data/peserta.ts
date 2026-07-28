@@ -64,4 +64,11 @@ export const DAFTAR_PESERTA: Peserta[] = [
   { id: "s046", nama: "YUDA DWI PUTRA", kelas: "X", jurusan: "TP", divisi: "RETEK" },
   { id: "p010", nama: "Early Janeuella Aqilah", kelas: "XI", jurusan: "DPIB", divisi: "Pengurus" },
   { id: "s047", nama: "Ratih Fauziah", kelas: "X", jurusan: "SIJA", divisi: "AI" },
+  { id: "s048", nama: "Ratih Fauziah", kelas: "X", jurusan: "SIJA", divisi: "AI" },
+  { id: "s049", nama: "Vino Prasetyo Alwahid", kelas: "X", jurusan: "RPL", divisi: "RETEK" },
+  { id: "s050", nama: "Arjuna Zaki Al khairi", kelas: "XI", jurusan: "TITL", divisi: "RETEK" },
+  { id: "s051", nama: "Ramadhan Ardiansyah", kelas: "XI", jurusan: "TITL", divisi: "RETEK" },
+  { id: "s052", nama: "Rakha Rifaat Putra", kelas: "XI", jurusan: "TITL", divisi: "RETEK" },
+  { id: "s053", nama: "Tiya Kartika", kelas: "XI", jurusan: "TITL", divisi: "RETEK" },
+  { id: "s054", nama: "Nazwa Naila Putri", kelas: "XI", jurusan: "TITL", divisi: "RETEK" },
 ];
