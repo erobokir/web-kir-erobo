@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = "https://kir-erobo.vercel.app";
+const SITE_URL = "https://erobo.site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [

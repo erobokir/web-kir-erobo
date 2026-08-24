@@ -16,7 +16,7 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
-const SITE_URL = "https://kir-erobo.vercel.app";
+const SITE_URL = "https://erobo.site";
 const SITE_TITLE =
   "KIR EROBO: The Science of Today is The Technology of Tomorrow";
 const SITE_DESCRIPTION =
@@ -111,7 +111,7 @@ export const metadata: Metadata = {
         url: "/images/brand/og-image.png",
         width: 1200,
         height: 630,
-        alt: "KIR EROBO — Kelompok Ilmiah Remaja SMKN 1 Jakarta",
+        alt: "KIR EROBO Kelompok Ilmiah Remaja SMKN 1 Jakarta",
       },
     ],
   },
