@@ -1,35 +1,49 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ACHIEVEMENTS } from "@/data/content";
+import { useEffect, useMemo, useState } from "react";
+import { ACHIEVEMENTS as FALLBACK_ACHIEVEMENTS } from "@/data/content";
 import { IconTrophy } from "@/components/icons";
+import type { PrestasiItem, PrestasiTier } from "@/types/prestasi";
 
-const TIER_STYLE = {
+const TIER_STYLE: Record<PrestasiTier, string> = {
   gold: "border-signal-gold/40 bg-signal-gold/10 text-signal-gold",
   silver: "border-ink-muted/40 bg-ink-muted/10 text-ink-muted",
   bronze: "border-signal-cyan/40 bg-signal-cyan/10 text-signal-cyan",
   special: "border-signal-violet/40 bg-signal-violet/10 text-signal-violet",
-} as const;
+};
 
-const TIER_RANK = {
-  gold: 0,
-  silver: 1,
-  bronze: 2,
-  special: 3,
-} as const;
+const TIER_RANK: Record<PrestasiTier, number> = { gold: 0, silver: 1, bronze: 2, special: 3 };
 
 const INITIAL_VISIBLE = 4;
 
 export default function Achievements() {
   const [showAll, setShowAll] = useState(false);
+  const [items, setItems] = useState<PrestasiItem[]>(FALLBACK_ACHIEVEMENTS as PrestasiItem[]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/prestasi")
+      .then((r) => r.json())
+      .then(({ prestasi }) => {
+        if (!cancelled && prestasi?.items?.length) {
+          setItems(prestasi.items);
+        }
+      })
+      .catch(() => {
+        // Kalau gagal, tetap tampilkan data cadangan dari FALLBACK_ACHIEVEMENTS.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const sortedAchievements = useMemo(() => {
-    return [...ACHIEVEMENTS].sort((a, b) => {
+    return [...items].sort((a, b) => {
       const yearDiff = Number(b.year) - Number(a.year);
       if (yearDiff !== 0) return yearDiff;
       return TIER_RANK[a.tier] - TIER_RANK[b.tier];
     });
-  }, []);
+  }, [items]);
 
   const visibleAchievements = showAll
     ? sortedAchievements

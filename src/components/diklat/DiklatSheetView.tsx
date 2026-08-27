@@ -228,6 +228,12 @@ export default function DiklatSheetView({
           </button>
           {isEditor ? (
             <>
+              <Link
+                href="/prestasi"
+                className="w-full text-center md:w-auto rounded-lg bg-signal-gold/20 px-3 py-2 text-xs font-medium text-signal-gold hover:bg-signal-gold/30"
+              >
+                🏆 Kelola Prestasi
+              </Link>
               <button
                 onClick={() => setShowChangePassword(true)}
                 className="w-full md:w-auto rounded-lg border border-space-line px-3 py-2 text-xs font-medium text-ink-muted hover:text-ink"

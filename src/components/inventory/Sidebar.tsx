@@ -23,6 +23,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/inventaris/serah-terima", label: "Serah Terima Barang", roles: ["divisi", "superadmin"] },
   { href: "/inventaris/pengembalian", label: "Barang Kembali", roles: ["divisi", "superadmin"] },
   { href: "/inventaris/laporan", label: "Laporan Transaksi", roles: ["superadmin", "ketua", "divisi"] },
+  { href: "/prestasi", label: "Kelola Prestasi", roles: ["superadmin", "ketua"] },
   { href: "/inventaris/users", label: "Kelola Akun", roles: ["superadmin"] },
 ];
 
