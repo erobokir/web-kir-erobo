@@ -41,7 +41,12 @@ export default function Achievements() {
     return [...items].sort((a, b) => {
       const yearDiff = Number(b.year) - Number(a.year);
       if (yearDiff !== 0) return yearDiff;
-      return TIER_RANK[a.tier] - TIER_RANK[b.tier];
+      const tierDiff = TIER_RANK[a.tier] - TIER_RANK[b.tier];
+      if (tierDiff !== 0) return tierDiff;
+      // Kalau tahun & tingkat sama, yang paling baru diinput tampil duluan.
+      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return bTime - aTime;
     });
   }, [items]);
 

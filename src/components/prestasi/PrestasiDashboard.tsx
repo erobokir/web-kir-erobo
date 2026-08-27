@@ -211,7 +211,10 @@ export default function PrestasiDashboard({
     return [...items].sort((a, b) => {
       const yearDiff = Number(b.year) - Number(a.year);
       if (yearDiff !== 0) return yearDiff;
-      return TIER_RANK[a.tier] - TIER_RANK[b.tier];
+      const tierDiff = TIER_RANK[a.tier] - TIER_RANK[b.tier];
+      if (tierDiff !== 0) return tierDiff;
+      // Kalau tahun & tingkat sama, yang paling baru diinput tampil duluan.
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
   }, [items]);
 
@@ -273,7 +276,7 @@ export default function PrestasiDashboard({
         href={backHref}
         className="inline-flex items-center gap-1.5 text-sm text-ink-muted transition-colors hover:text-ink"
       >
-      Kembali ke {backLabel}
+        ← Kembali ke {backLabel}
       </Link>
 
       <header className="flex items-start justify-between gap-4">
