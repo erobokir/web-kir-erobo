@@ -19,7 +19,11 @@ async function isKetuaFromInventoryToken(request: Request): Promise<boolean> {
   const authHeader = request.headers.get("authorization");
   if (!authHeader?.startsWith("Bearer ")) return false;
 
-  const apiBase = process.env.NEXT_PUBLIC_INVENTORY_API_URL || "http://localhost:4000";
+  // Buang trailing slash supaya tidak jadi "host//api/auth/me" (lihat catatan
+  // di src/lib/inventory/api.ts).
+  const apiBase = (
+    process.env.NEXT_PUBLIC_INVENTORY_API_URL || "http://localhost:4000"
+  ).replace(/\/+$/, "");
 
   try {
     const res = await fetch(`${apiBase}/api/auth/me`, {
@@ -51,6 +55,22 @@ function validateItem(body: unknown): Omit<PrestasiItem, "id" | "created_at"> | 
   return { title, event, year, tier };
 }
 
+/** Normalisasi judul untuk dibandingkan: lowercase + spasi berlebih dirapikan. */
+function normalizeTitle(title: string): string {
+  return title.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+/** Cek apakah sudah ada prestasi dengan judul + tahun yang sama persis. */
+function findDuplicate(
+  items: PrestasiItem[],
+  candidate: Omit<PrestasiItem, "id" | "created_at">
+): PrestasiItem | undefined {
+  const normalizedTitle = normalizeTitle(candidate.title);
+  return items.find(
+    (item) => normalizeTitle(item.title) === normalizedTitle && item.year === candidate.year
+  );
+}
+
 export async function GET() {
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase
@@ -79,6 +99,15 @@ export async function POST(request: Request) {
   const { data: existing } = await supabase.from("prestasi_data").select("*").eq("id", "main").maybeSingle();
 
   const currentItems: PrestasiItem[] = existing?.items ?? [];
+
+  const duplicate = findDuplicate(currentItems, validated);
+  if (duplicate) {
+    return jsonError(
+      `Prestasi "${duplicate.title}" (${duplicate.year}) sudah ada, tidak bisa ditambahkan lagi.`,
+      409
+    );
+  }
+
   const newItem: PrestasiItem = {
     id: `p${Date.now()}`,
     ...validated,
